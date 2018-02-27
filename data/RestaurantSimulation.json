@@ -1,0 +1,207 @@
+{
+  "restaurant": {
+    "name": "Tushar's Restaurant",
+    "wealth": 50000,
+    "kitchen": {
+      "food": [
+
+        {
+            "name": "tofu",
+            "value": 2,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "flour",
+            "value": 3,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "oil",
+            "value": 2,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "rice",
+            "value": 4,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "broccoli",
+            "value": 3,
+	    "isFinished": false 
+        }
+      ],
+
+      "dish": [
+        {
+            "name": "Tofu Fried Wonton",
+            "value": 10,
+            "recipe": {
+                "name": "Tofu Fried Wonton",
+                "ingredients": ["tofu", "flour", "oil"],
+                "equipment": ["stove", "knives"],
+                "time": 20,
+                "recipeValue": 50
+            }
+        },
+
+        {
+            "name": "Fried Rice",
+            "value": 12,
+            "recipe": {
+                "name": "Fried Rice",
+                "ingredients": ["rice", "broccoli", "oil"],
+                "equipment": ["stove", "apron", "knives"],
+                "time": 25,
+                "recipeValue": 60
+            }
+        }
+      ],
+
+      "equipment": [
+
+        {
+            "name": "knives",
+            "upkeepValue": 5,
+            "value": 10
+        },
+
+        {
+            "name": "apron",
+            "upkeepValue": 2,
+            "value": 5    
+        },
+
+        {
+            "name": "stove",
+            "upkeepValue": 50,
+            "value": 100
+        }
+
+      ]
+
+    },
+
+    "menu": {
+
+        "dish": ["Tofu Fried Wonton", "Fried Rice"]
+
+    }
+
+  },
+
+  "market": {
+
+    "food": [
+        {
+            "name": "paneer",
+            "value": 3,
+	    "isFinished": false 
+
+        },
+
+        {
+            "name": "butter",
+            "value": 2,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "tomato",
+            "value": 1,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "chicken",
+            "value": 5,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "bagel",
+            "value": 2,
+	    "isFinished": true
+        },
+
+        {
+            "name": "garlic",
+            "value": 1,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "pizza bread",
+            "value": 3,
+	    "isFinished": false 
+        },
+
+        {
+            "name": "cheese",
+            "value": 3,
+	    "isFinished": true
+        }
+    ],
+
+    "equipment": [
+
+        {
+            "name": "mixer",
+            "upkeepValue": 5,
+            "value": 15
+        },
+
+        {
+            "name": "grinder",
+            "upkeepValue": 5,
+            "value": 15
+        },
+
+        {
+            "name": "oven",
+            "upkeepValue": 10,
+            "value": 40
+        },
+
+        {
+            "name": "refrigerator",
+            "upkeepValue": 15,
+            "value": 100
+        }
+    ],
+
+    "recipe": [
+
+        {
+            "name": "Tomato Cheese Pizza",
+            "ingredients": ["tomato", "cheese", "pizza bread"],
+            "equipment": ["oven", "knives", "apron"],
+            "time": 20,
+            "recipeValue": 40
+        },
+
+        {
+            "name": "Paneer Butter Masala",
+            "ingredients": ["paneer", "butter", "tomato"],
+            "equipment": ["stove", "knives", "mixer", "grinder"],
+            "time": 30,
+            "recipeValue": 70
+        },
+
+        {
+            "name": "Garlic Bagel",
+            "ingredients": ["garlic", "bagel"],
+            "equipment": ["oven", "knives"],
+            "time": 10,
+            "recipeValue": 20
+        }
+
+    ]
+
+  }
+
+}
