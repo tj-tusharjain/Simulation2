@@ -49,7 +49,7 @@ public class Simulation2 {
                 passTime(time, timeChange);
                 break;
 
-            case ""
+            case "buy":
         }
 
     }
