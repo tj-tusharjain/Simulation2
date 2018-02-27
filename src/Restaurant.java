@@ -1,7 +1,7 @@
 public class Restaurant {
 
     String name;
-    long wealth;
+    double wealth;
     Kitchen kitchen;
     Menu menu;
 
@@ -13,11 +13,11 @@ public class Restaurant {
         this.name = name;
     }
 
-    public long getWealth() {
+    public double getWealth() {
         return wealth;
     }
 
-    public void setWealth(long wealth) {
+    public void setWealth(double wealth) {
         this.wealth = wealth;
     }
 

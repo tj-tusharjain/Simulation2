@@ -1,7 +1,7 @@
 public class Dish {
 
     String name;
-    String value;
+    int value;
     Recipe recipe;
 
     public String getName() {
@@ -12,11 +12,11 @@ public class Dish {
         this.name = name;
     }
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 
