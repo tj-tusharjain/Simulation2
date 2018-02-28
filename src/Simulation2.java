@@ -7,7 +7,7 @@ public class Simulation2 {
 
     Scanner scanner = new Scanner(System.in);
     public static final double START_TIME = 6.0;
-    public static final double CLOSE_TIME = 20.0;
+    private static final int COMPLEXITY_THRESHOLD = 20;
 
     public void gameInterface(Simulation gameWorld, double time){
 
@@ -35,7 +35,7 @@ public class Simulation2 {
                     break;
                 }
 
-                System.out.println(gameWorld.getRestaurant().getWealth());
+                getWealth(gameWorld);
                 break;
 
             case "time":
@@ -96,9 +96,12 @@ public class Simulation2 {
 
     }
 
+    public double getWealth(Simulation gameWorld){
+        System.out.println(gameWorld.getRestaurant().getWealth());
+        return gameWorld.getRestaurant().getWealth();
+    }
 
     public double passTime(double time, String timeChange){
-
         for (int i = 0; i < timeChange.length(); i++){
             if (!Character.isDigit(timeChange.charAt(i))){
                 System.out.println("Invalid time entry");
@@ -111,24 +114,25 @@ public class Simulation2 {
         }
 
         double timeHour = Integer.parseInt(timeChange) / 60;
-        time = timeHour % 16 + time;
+        time = timeHour % 24 + time;
 
-        if (time > 20){
-            time = (time - 20) + 6;
+        if (time > 24){
+            time = (time - 24);
         }
 
         return time;
     }
 
 
-    public void inventory(Simulation gameWorld, String type){
-
+    public String inventory(Simulation gameWorld, String type){
+        String outputString = "";
         if (type.equalsIgnoreCase("recipe")){
 
             ArrayList<Dish> recipeList = gameWorld.getRestaurant().getKitchen().getRecipe();
             System.out.println("The recipes in the inventory are:");
             for (Dish recipe : recipeList){
                 System.out.println(recipe.getName());
+                outputString += recipe.getName();
             }
 
         }else if (type.equalsIgnoreCase("food")){
@@ -137,6 +141,7 @@ public class Simulation2 {
             System.out.println("The food items in the inventory are:");
             for (Food food : foodList){
                 System.out.println(food.getName());
+                outputString += food.getName();
             }
 
         }else if (type.equalsIgnoreCase("equipment")) {
@@ -145,19 +150,20 @@ public class Simulation2 {
             System.out.println("The equipments in the inventory are:");
             for (Equipment equipment : equipmentList) {
                 System.out.println(equipment.getName());
+                outputString += equipment.getName();
 
             }
         }else {
             System.out.println("The item type requested is not found");
         }
 
+        return outputString;
     }
 
 
-    public void information(Simulation gameWorld, String item){
+    public String information(Simulation gameWorld, String item){
 
-
-
+        String outputString = "";
         ArrayList<Food> foodList = gameWorld.getRestaurant().getKitchen().getFood();
         for (Food food : foodList){
 
@@ -168,7 +174,8 @@ public class Simulation2 {
                 System.out.println("base value: "+food.getValue());
                 System.out.println("quantity available: "+food.getQuantity());
                 System.out.println("finished food product: "+food.isFinished());
-                return;
+                outputString = food.getName()+food.getValue()+food.getQuantity()+food.isFinished();
+                return outputString;
 
             }
         }
@@ -185,7 +192,7 @@ public class Simulation2 {
                 System.out.println("Ingredients needed: "+recipe.getRecipe().getIngredients().toString());
                 System.out.println("Recipe Value: "+recipe.getRecipe().getRecipeValue());
                 System.out.println("Preparation Time: "+recipe.getRecipe().getTime());
-                return;
+                return outputString;
 
             }
         }
@@ -199,10 +206,11 @@ public class Simulation2 {
                 System.out.println("name: " + equipment.getName());
                 System.out.println("base value: " + equipment.getValue());
                 System.out.println("upkeep value: " + equipment.getUpkeepValue());
-                return;
+                return outputString;
 
             }
         }
+        return outputString;
     }
 
 
@@ -448,6 +456,8 @@ public class Simulation2 {
         ArrayList<Equipment> equipmentList = gameWorld.getMarket().getEquipment();
         ArrayList<Equipment> equipmentListRest = gameWorld.getRestaurant().getKitchen().getEquipment();
 
+        double wealth = gameWorld.getRestaurant().getWealth();
+
         for (Food food : foodList){
             if (food.getName().equalsIgnoreCase(buyItem)){
                 int quantity = Integer.parseInt(buyQuantity);
@@ -457,12 +467,14 @@ public class Simulation2 {
 
                     if (restFood.getName().equalsIgnoreCase(buyItem)){
                         added = true;
+                        gameWorld.getRestaurant().setWealth(wealth - food.getValue()*quantity);
                         restFood.setQuantity(restFood.getQuantity()+quantity);
                     }
                 }
                 if (!added){
                     Food addFood = food;
                     addFood.setQuantity(quantity);
+                    gameWorld.getRestaurant().setWealth(wealth - food.getValue()*quantity);
                     gameWorld.getRestaurant().getKitchen().food.add(food);
                 }
             }
@@ -478,6 +490,7 @@ public class Simulation2 {
                         dish.setName(recipe.getName());
                         dish.setRecipe(recipe);
                         recipeListRest.add(dish);
+                        gameWorld.getRestaurant().setWealth(wealth - dish.getRecipe().getRecipeValue());
                         return;
                     }
                 }
@@ -488,20 +501,76 @@ public class Simulation2 {
 
             if (equipment.getName().equalsIgnoreCase(buyItem)){
                 int quantity = Integer.parseInt(buyQuantity);
+                boolean added = false;
                 for (Equipment restEquipment : equipmentListRest){
 
                     if (restEquipment.getName().equalsIgnoreCase(buyItem)){
+                        added = true;
                         restEquipment.setQuantity(restEquipment.getQuantity()+quantity);
+                        gameWorld.getRestaurant().setWealth(wealth - restEquipment.getValue()*quantity);
+
                     }
                 }
-
+                if (!added){
+                    equipment.setQuantity(quantity);
+                    gameWorld.getRestaurant().setWealth(wealth - equipment.getValue()*quantity);
+                    gameWorld.getRestaurant().getKitchen().equipment.add(equipment);
+                }
             }
-
         }
     }
 
+    public void sellMarket(Simulation gameWorld, String inputItem){
 
+        int tempIndex = inputItem.lastIndexOf(" ");
+        String[] inputList =  {inputItem.substring(0, tempIndex), inputItem.substring(tempIndex)};
+        String sellItem = inputList[0].trim().toLowerCase();
+        String sellQuantity = inputList[1].trim();
+        boolean containsItem = false;
+        int quantity = Integer.parseInt(sellQuantity);
+        double wealth = gameWorld.getRestaurant().getWealth();
 
+        for (Food food : gameWorld.getRestaurant().getKitchen().getFood()){
+            if (food.getName().equalsIgnoreCase(sellItem)){
+                if (quantity > food.getQuantity()){
+                    gameWorld.getRestaurant().setWealth(wealth + food.getValue()*0.5*food.getQuantity());
+                    gameWorld.getRestaurant().getKitchen().food.remove(food);
+                }else {
+                    quantity = food.getQuantity() - quantity;
+                    food.setQuantity(quantity);
+                    gameWorld.getRestaurant().setWealth(wealth + food.getValue()*0.5*quantity);
+                }
+            }
+        }
+
+        for (Dish dish : gameWorld.getRestaurant().getKitchen().getRecipe()){
+            if (dish.getName().equalsIgnoreCase(sellItem)){
+                gameWorld.getRestaurant().setWealth(wealth + dish.getValue()*0.5);
+                gameWorld.getRestaurant().getKitchen().dish.remove(dish);
+            }
+        }
+
+        for (Equipment equipment : gameWorld.getRestaurant().getKitchen().getEquipment()){
+            if (equipment.getName().equalsIgnoreCase(sellItem)){
+                gameWorld.getRestaurant().setWealth(wealth + equipment.getValue()*0.5);
+                gameWorld.getRestaurant().getKitchen().equipment.remove(equipment);
+            }
+        }
+    }
+
+    public void calcPopularity(Simulation gameWorld) {
+        int countComplex = 0;
+
+        for (Dish food : gameWorld.getRestaurant().getKitchen().getRecipe()) {
+            if (food.getRecipe().getTime() > COMPLEXITY_THRESHOLD) {
+                countComplex++;
+            }
+        }
+        int variety = gameWorld.getRestaurant().getMenu().getDish().size();
+        double popularity = 10 - (variety * countComplex) % 10; /* gives a popularity value on the scale of 1 to 10 */
+
+        gameWorld.getRestaurant().setPopularity(popularity);
+    }
 
 
 
@@ -512,7 +581,6 @@ public class Simulation2 {
         double time = START_TIME;
         Simulation2 gameObject = new Simulation2();
         gameObject.gameInterface(gameWorld, time);
-
 
     }
 

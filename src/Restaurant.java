@@ -4,6 +4,7 @@ public class Restaurant {
     double wealth;
     Kitchen kitchen;
     Menu menu;
+    double popularity = 1;
 
     public String getName() {
         return name;
@@ -35,5 +36,13 @@ public class Restaurant {
 
     public void setMenu(Menu menu) {
         this.menu = menu;
+    }
+
+    public double getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(double popularity) {
+        this.popularity = popularity;
     }
 }
