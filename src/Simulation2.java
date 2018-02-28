@@ -11,6 +11,8 @@ public class Simulation2 {
 
     Scanner scanner = new Scanner(System.in);
     public static final double START_TIME = 6.0;
+    public static final double CLOSE_TIME = 22.0;
+    public static final double MIDNIGHT = 24.0;
     private static final int COMPLEXITY_THRESHOLD = 20;
 
 
@@ -25,6 +27,27 @@ public class Simulation2 {
         System.out.println("Welcome to "+gameWorld.getRestaurant().getName());
 
         while (gameRun){
+
+            //To pay upkeep value for equipments at midnight
+            if (time == MIDNIGHT){
+                ArrayList<Equipment> equipmentLists = gameWorld.getRestaurant().getKitchen().getEquipment();
+                double wealth = gameWorld.getRestaurant().getWealth();
+                for (Equipment equipment : equipmentLists){
+                    wealth -= equipment.getUpkeepValue();
+                }
+
+                gameWorld.getRestaurant().setWealth(wealth);
+                if (gameWorld.getRestaurant().getWealth() < 0){
+                    double wealthRest = gameWorld.getRestaurant().getWealth();
+                    for (Equipment equipment : equipmentLists)    {
+                        while (wealthRest < 0){
+                            wealthRest -= equipment.getUpkeepValue();
+                            equipmentLists.remove(equipment);
+                            break;
+                        }
+                    }
+                }
+            }
 
             System.out.print("What would you like to do? : ");
             String command = scanner.nextLine();
@@ -79,7 +102,11 @@ public class Simulation2 {
 
                 case "cook":
                     commandList = command.split(" ", 2);
-                    cook(gameWorld, commandList[1].trim(), time);
+                    if (time < CLOSE_TIME){
+                        cook(gameWorld, commandList[1].trim(), time);
+                    }else {
+                        System.out.println("The restaurant is closed");
+                    }
                     break;
 
                 case "menu add":
