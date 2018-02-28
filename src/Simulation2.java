@@ -395,6 +395,16 @@ public class Simulation2 {
                     listMarket(gameWorld);
                     break;
 
+                case "buy":
+                    String inputItem = inputList[1];
+                    buyMarket(gameWorld, inputItem);
+                    break;
+
+                case "sell":
+                    String sellItem = inputList[1];
+                    sellMarket(gameWorld, sellItem);
+                    break;
+
 
             }
         }
@@ -409,7 +419,6 @@ public class Simulation2 {
             System.out.println(food.getValue());
         }
 
-        System.out.println("---------------------");
 
         ArrayList<Recipe> recipeList = gameWorld.getMarket().getRecipe();
         System.out.println("Recipes available in the market are: ");
@@ -418,17 +427,81 @@ public class Simulation2 {
             System.out.println(recipe.getRecipeValue());
         }
 
-        System.out.println("---------------------");
         ArrayList<Equipment> equipmentList = gameWorld.getMarket().getEquipment();
         System.out.println("Equipments available in market are: ");
         for (Equipment equipment : equipmentList){
             System.out.print(equipment.getName()+" - ");
             System.out.println(equipment.getValue());
         }
-        System.out.println("---------------------");
     }
 
-    
+    public void buyMarket(Simulation gameWorld, String inputItem){
+
+        int tempIndex = inputItem.lastIndexOf(" ");
+        String[] inputList =  {inputItem.substring(0, tempIndex), inputItem.substring(tempIndex)};
+        String buyItem = inputList[0].trim();
+        String buyQuantity = inputList[1].trim();
+        ArrayList<Food> foodList = gameWorld.getMarket().getFood();
+        ArrayList<Food> foodListRest = gameWorld.getRestaurant().getKitchen().getFood();
+        ArrayList<Recipe> recipeList = gameWorld.getMarket().getRecipe();
+        ArrayList<Dish> recipeListRest = gameWorld.getRestaurant().getKitchen().getRecipe();
+        ArrayList<Equipment> equipmentList = gameWorld.getMarket().getEquipment();
+        ArrayList<Equipment> equipmentListRest = gameWorld.getRestaurant().getKitchen().getEquipment();
+
+        for (Food food : foodList){
+            if (food.getName().equalsIgnoreCase(buyItem)){
+                int quantity = Integer.parseInt(buyQuantity);
+                boolean added = false;
+
+                for (Food restFood : foodListRest){
+
+                    if (restFood.getName().equalsIgnoreCase(buyItem)){
+                        added = true;
+                        restFood.setQuantity(restFood.getQuantity()+quantity);
+                    }
+                }
+                if (!added){
+                    Food addFood = food;
+                    addFood.setQuantity(quantity);
+                    gameWorld.getRestaurant().getKitchen().food.add(food);
+                }
+            }
+        }
+
+        for (Recipe recipe : recipeList){
+            if (recipe.getName().equalsIgnoreCase(buyItem)){
+
+                for (Dish restRecipe : recipeListRest){
+
+                    if (restRecipe.getName().equalsIgnoreCase(buyItem)){
+                        Dish dish = new Dish();
+                        dish.setName(recipe.getName());
+                        dish.setRecipe(recipe);
+                        recipeListRest.add(dish);
+                        return;
+                    }
+                }
+            }
+        }
+
+        for (Equipment equipment : equipmentList){
+
+            if (equipment.getName().equalsIgnoreCase(buyItem)){
+                int quantity = Integer.parseInt(buyQuantity);
+                for (Equipment restEquipment : equipmentListRest){
+
+                    if (restEquipment.getName().equalsIgnoreCase(buyItem)){
+                        restEquipment.setQuantity(restEquipment.getQuantity()+quantity);
+                    }
+                }
+
+            }
+
+        }
+    }
+
+
+
 
 
 
