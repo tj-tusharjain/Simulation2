@@ -1,3 +1,4 @@
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -20,8 +21,10 @@ public class Simulation2 {
         ArrayList<String> checkList = new ArrayList<>(Arrays.asList("time", "add", "remove", "list")) ;
 
         String actionVariable = commandList[0];
-        if (checkList.contains(commandList[1])){
-            actionVariable = commandList[0] + " " + commandList[1];
+        if (commandList.length >= 2){
+            if (checkList.contains(commandList[1])){
+                actionVariable = commandList[0] + " " + commandList[1];
+            }
         }
 
         switch (actionVariable){
@@ -63,7 +66,7 @@ public class Simulation2 {
 
             case "cook":
                 commandList = command.split(" ", 2);
-                cook(gameWorld, commandList[1].trim());
+                cook(gameWorld, commandList[1].trim(), time);
                 break;
 
             case "menu add":
@@ -78,6 +81,14 @@ public class Simulation2 {
                 menuRemove(gameWorld, foodRemove);
                 break;
 
+            case "menu list":
+                menuList(gameWorld);
+                break;
+
+
+            case "market":
+                market(gameWorld);
+                break;
 
 
 
@@ -99,7 +110,8 @@ public class Simulation2 {
             return time;
         }
 
-        time = Integer.parseInt(timeChange) % 16 + time;
+        double timeHour = Integer.parseInt(timeChange) / 60;
+        time = timeHour % 16 + time;
 
         if (time > 20){
             time = (time - 20) + 6;
@@ -194,7 +206,7 @@ public class Simulation2 {
     }
 
 
-    public void cook(Simulation gameWorld, String inputString){
+    public void cook(Simulation gameWorld, String inputString, double time){
 
         int tempIndex = inputString.lastIndexOf(" ");
         String[] inputList =  {inputString.substring(0, tempIndex), inputString.substring(tempIndex)};
@@ -299,7 +311,8 @@ public class Simulation2 {
 
         System.out.println("Cooked "+foodRecipe.getName()+": "+quantityToCook+" pieces.");
         double wealth = gameWorld.getRestaurant().getWealth();
-        gameWorld.getRestaurant().setWealth(wealth + (foodRecipe.getValue())*1.5);
+        gameWorld.getRestaurant().setWealth(wealth + (foodRecipe.getValue())*1.5*quantityToCook);
+        time = passTime(time, Integer.toString(foodRecipe.getRecipe().getTime()*quantityToCook));
 
     }
 
@@ -331,7 +344,91 @@ public class Simulation2 {
 
     }
 
+    public void menuRemove(Simulation gameWorld, String foodItem){
 
+        ArrayList<String> menu = gameWorld.getRestaurant().getMenu().getDish();
+
+        for (String dish : menu){
+            if (dish.equalsIgnoreCase(foodItem)){
+                gameWorld.getRestaurant().menu.dish.remove(dish);
+                return;
+            }
+        }
+
+        System.out.println("Dish does not exist in the menu");
+
+    }
+
+    public void menuList(Simulation gameWorld){
+
+        ArrayList<String> menu = gameWorld.getRestaurant().getMenu().getDish();
+        ArrayList<Dish> recipeList = gameWorld.getRestaurant().getKitchen().getRecipe();
+        for (String dish : menu){
+            System.out.print(dish+" - ");
+            for (Dish recipe : recipeList){
+                if (recipe.getName().equalsIgnoreCase(dish)){
+                    System.out.println(recipe.getValue()*1.5);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void market(Simulation gameWorld){
+
+        boolean exitMarket = false;
+
+        while (!exitMarket){
+            System.out.println("You're in the market, what would you like to do?");
+            String inputString = scanner.nextLine();
+
+            String[] inputList = inputString.split(" ", 2);
+            String actionVariable = inputList[0];
+
+            switch (actionVariable){
+
+                case "exit":
+                    exitMarket = true;
+                    break;
+
+                case "list":
+                    listMarket(gameWorld);
+                    break;
+
+
+            }
+        }
+    }
+
+    public void listMarket(Simulation gameWorld){
+
+        ArrayList<Food> foodList = gameWorld.getMarket().getFood();
+        System.out.println("Food Items Available in market are: ");
+        for (Food food : foodList){
+            System.out.print(food.getName()+" - ");
+            System.out.println(food.getValue());
+        }
+
+        System.out.println("---------------------");
+
+        ArrayList<Recipe> recipeList = gameWorld.getMarket().getRecipe();
+        System.out.println("Recipes available in the market are: ");
+        for (Recipe recipe : recipeList){
+            System.out.print(recipe.getName()+" - ");
+            System.out.println(recipe.getRecipeValue());
+        }
+
+        System.out.println("---------------------");
+        ArrayList<Equipment> equipmentList = gameWorld.getMarket().getEquipment();
+        System.out.println("Equipments available in market are: ");
+        for (Equipment equipment : equipmentList){
+            System.out.print(equipment.getName()+" - ");
+            System.out.println(equipment.getValue());
+        }
+        System.out.println("---------------------");
+    }
+
+    
 
 
 

@@ -3,6 +3,7 @@ public class Equipment {
     String name;
     int upkeepValue;
     int value;
+    int quantity = 1;
 
     public String getName() {
         return name;
@@ -26,5 +27,13 @@ public class Equipment {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
