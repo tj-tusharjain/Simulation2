@@ -11,87 +11,93 @@ public class Simulation2 {
 
     public void gameInterface(Simulation gameWorld, double time){
 
+        boolean gameRun = true;
         System.out.println("Welcome to "+gameWorld.getRestaurant().getName());
 
-        System.out.print("What would you like to do? : ");
-        String command = scanner.nextLine();
-        command.toLowerCase();
+        while (gameRun){
 
-        String[] commandList = command.split(" +");
-        ArrayList<String> checkList = new ArrayList<>(Arrays.asList("time", "add", "remove", "list")) ;
+            System.out.print("What would you like to do? : ");
+            String command = scanner.nextLine();
+            command.toLowerCase();
 
-        String actionVariable = commandList[0];
-        if (commandList.length >= 2){
-            if (checkList.contains(commandList[1])){
-                actionVariable = commandList[0] + " " + commandList[1];
+            String[] commandList = command.split(" +");
+            ArrayList<String> checkList = new ArrayList<>(Arrays.asList("time", "add", "remove", "list")) ;
+
+            String actionVariable = commandList[0];
+            if (commandList.length >= 2){
+                if (checkList.contains(commandList[1])){
+                    actionVariable = commandList[0] + " " + commandList[1];
+                }
             }
-        }
 
-        switch (actionVariable){
+            switch (actionVariable){
 
-            case "wealth":
-                if (commandList.length != 1){
-                    System.out.println("I don't understand");
+                case "wealth":
+                    if (commandList.length != 1){
+                        System.out.println("I don't understand");
+                        break;
+                    }
+
+                    getWealth(gameWorld);
                     break;
-                }
 
-                getWealth(gameWorld);
-                break;
+                case "time":
+                    if (commandList.length != 1){
+                        System.out.println("I don't understand");
+                        break;
+                    }
 
-            case "time":
-                if (commandList.length != 1){
-                    System.out.println("I don't understand");
+                    System.out.println("The current time is "+time);
                     break;
-                }
 
-                System.out.println("The current time is "+time);
-                break;
+                case "pass time":
+                    String timeChange = commandList[2];
+                    passTime(time, timeChange);
+                    break;
 
-            case "pass time":
-                String timeChange = commandList[2];
-                passTime(time, timeChange);
-                break;
+                case "inventory":
+                    commandList = command.split(" +", 2);
+                    String type = commandList[1];
+                    inventory(gameWorld, type);
+                    break;
 
-            case "inventory":
-                commandList = command.split(" +", 2);
-                String type = commandList[1];
-                inventory(gameWorld, type);
-                break;
+                case "info":
+                    commandList = command.split(" +", 2);
+                    String item = commandList[1];
+                    information(gameWorld, item);
+                    break;
 
-            case "info":
-                commandList = command.split(" +", 2);
-                String item = commandList[1];
-                information(gameWorld, item);
-                break;
+                case "cook":
+                    commandList = command.split(" ", 2);
+                    cook(gameWorld, commandList[1].trim(), time);
+                    break;
 
-            case "cook":
-                commandList = command.split(" ", 2);
-                cook(gameWorld, commandList[1].trim(), time);
-                break;
+                case "menu add":
+                    commandList = command.split(" ", 3);
+                    String foodItem = commandList[2];
+                    menuAdd(gameWorld, foodItem);
+                    break;
 
-            case "menu add":
-                commandList = command.split(" ", 3);
-                String foodItem = commandList[2];
-                menuAdd(gameWorld, foodItem);
-                break;
+                case "menu remove":
+                    commandList = command.split(" ", 3);
+                    String foodRemove = commandList[2];
+                    menuRemove(gameWorld, foodRemove);
+                    break;
 
-            case "menu remove":
-                commandList = command.split(" ", 3);
-                String foodRemove = commandList[2];
-                menuRemove(gameWorld, foodRemove);
-                break;
-
-            case "menu list":
-                menuList(gameWorld);
-                break;
+                case "menu list":
+                    menuList(gameWorld);
+                    break;
 
 
-            case "market":
-                market(gameWorld);
-                break;
+                case "market":
+                    market(gameWorld);
+                    time += 1.0;
+                    break;
 
+                case "quit":
+                    System.exit(-1);
 
-
+            }
         }
 
     }
@@ -367,19 +373,24 @@ public class Simulation2 {
 
     }
 
-    public void menuList(Simulation gameWorld){
+    public String menuList(Simulation gameWorld){
+
+        String outputString = "";
 
         ArrayList<String> menu = gameWorld.getRestaurant().getMenu().getDish();
         ArrayList<Dish> recipeList = gameWorld.getRestaurant().getKitchen().getRecipe();
         for (String dish : menu){
             System.out.print(dish+" - ");
+            outputString += dish+" - ";
             for (Dish recipe : recipeList){
                 if (recipe.getName().equalsIgnoreCase(dish)){
                     System.out.println(recipe.getValue()*1.5);
+                    outputString+=recipe.getValue()*1.5;
                     break;
                 }
             }
         }
+        return outputString;
     }
 
     public void market(Simulation gameWorld){
@@ -532,7 +543,7 @@ public class Simulation2 {
 
         for (Food food : gameWorld.getRestaurant().getKitchen().getFood()){
             if (food.getName().equalsIgnoreCase(sellItem)){
-                if (quantity > food.getQuantity()){
+                if (quantity >= food.getQuantity()){
                     gameWorld.getRestaurant().setWealth(wealth + food.getValue()*0.5*food.getQuantity());
                     gameWorld.getRestaurant().getKitchen().food.remove(food);
                 }else {

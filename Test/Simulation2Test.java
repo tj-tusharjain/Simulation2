@@ -54,6 +54,62 @@ public class Simulation2Test {
         assertEquals(50015.0, gameWorld.getRestaurant().getWealth());
 
     }
-    
 
+    @Test
+    public void menuAddTest(){
+
+        gameObject.menuAdd(gameWorld, "Fried Rice");
+        String firstMenuItem = gameWorld.getRestaurant().getMenu().getDish().get(0);
+        assertEquals("Fried Rice", firstMenuItem);
+
+    }
+
+    @Test
+    public void menuRemoveTest(){
+
+        gameObject.menuAdd(gameWorld, "Fried Rice");
+        gameObject.menuRemove(gameWorld, "Fried Rice");
+        int menuSize = gameWorld.getRestaurant().getMenu().getDish().size();
+        assertEquals(0, menuSize);
+    }
+
+    @Test
+    public void menuList(){
+
+        gameObject.menuAdd(gameWorld, "Fried Rice");
+        gameObject.menuAdd(gameWorld, "Tofu Fried Wonton");
+        String menu = gameObject.menuList(gameWorld);
+        String compareString = "Fried Rice - 18.0Tofu Fried Wonton - 15.0";
+
+        assertEquals(compareString, menu);
+    }
+
+    @Test
+    public void buyMarketTest(){
+
+        gameObject.buyMarket(gameWorld, "paneer 1");
+        Food foodItem = new Food();
+        for (Food food : gameWorld.getRestaurant().getKitchen().getFood()){
+            if (food.getName().equalsIgnoreCase("paneer")){
+                foodItem = food;
+            }
+        }
+        boolean containsItem = gameWorld.getRestaurant().getKitchen().getFood().contains(foodItem);
+        assertEquals(true, containsItem);
+
+    }
+
+    @Test
+    public void sellMarketTest() {
+
+        gameObject.sellMarket(gameWorld, "tofu 1");
+        boolean contains = false;
+
+        for (Food food : gameWorld.getRestaurant().getKitchen().getFood()) {
+            if (food.getName().equalsIgnoreCase("tofu")) {
+                contains = true;
+            }
+        }
+        assertEquals(false, contains);
+    }
 }
