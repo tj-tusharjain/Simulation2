@@ -3,12 +3,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+/**
+ * A class that allows you to simulate a restaurant. It allows the user to buy, sell and cook food items.
+ * Build recipes and sell items to different customers.
+ */
 public class Simulation2 {
 
     Scanner scanner = new Scanner(System.in);
     public static final double START_TIME = 6.0;
     private static final int COMPLEXITY_THRESHOLD = 20;
 
+
+    /**
+     * A method to run the interface of the game, it prints the basic information and instructions.
+     * @param gameWorld the layout of the game.
+     * @param time the present time of the room.
+     */
     public void gameInterface(Simulation gameWorld, double time){
 
         boolean gameRun = true;
@@ -97,16 +107,32 @@ public class Simulation2 {
                 case "quit":
                     System.exit(-1);
 
+                default:
+                    System.out.println("I don't understand");
+
             }
         }
 
     }
 
+
+    /**
+     * A method that returns the current wealth of the restaurant.
+     * @param gameWorld the current world of the game.
+     * @return returns the wealth
+     */
     public double getWealth(Simulation gameWorld){
         System.out.println(gameWorld.getRestaurant().getWealth());
         return gameWorld.getRestaurant().getWealth();
     }
 
+
+    /**
+     * A method that fast forwards the specified amount of time.
+     * @param time the current time
+     * @param timeChange the amount of time to be changed by
+     * @return the new time
+     */
     public double passTime(double time, String timeChange){
         for (int i = 0; i < timeChange.length(); i++){
             if (!Character.isDigit(timeChange.charAt(i))){
@@ -130,6 +156,12 @@ public class Simulation2 {
     }
 
 
+    /**
+     * A method that prints the inventory of items present in the restaurant.
+     * @param gameWorld the current world of the game.
+     * @param type the type of items to be shown.
+     * @return a string of the output
+     */
     public String inventory(Simulation gameWorld, String type){
         String outputString = "";
         if (type.equalsIgnoreCase("recipe")){
@@ -167,6 +199,12 @@ public class Simulation2 {
     }
 
 
+    /**
+     * A method that prints the information for the item given
+     * @param gameWorld the current world of the game.
+     * @param item the item whose information is to be shown
+     * @return
+     */
     public String information(Simulation gameWorld, String item){
 
         String outputString = "";
@@ -220,6 +258,12 @@ public class Simulation2 {
     }
 
 
+    /**
+     * A method that cooks the required dish.
+     * @param gameWorld the current world of the game.
+     * @param inputString the name and quantity of the food item
+     * @param time the current time of the game
+     */
     public void cook(Simulation gameWorld, String inputString, double time){
 
         int tempIndex = inputString.lastIndexOf(" ");
@@ -331,6 +375,11 @@ public class Simulation2 {
     }
 
 
+    /**
+     * A method that allows the user to add an item to the menu
+     * @param gameWorld the current world of the game.
+     * @param foodName the name of the food item to be added
+     */
     public void menuAdd(Simulation gameWorld, String foodName){
 
         String foodItem = "";
@@ -358,6 +407,11 @@ public class Simulation2 {
 
     }
 
+    /**
+     *A method to remove a specified food item from the menu
+     * @param gameWorld the current world of the game.
+     * @param foodItem the food item to be removed.
+     */
     public void menuRemove(Simulation gameWorld, String foodItem){
 
         ArrayList<String> menu = gameWorld.getRestaurant().getMenu().getDish();
@@ -373,6 +427,11 @@ public class Simulation2 {
 
     }
 
+    /**
+     *A method that shows the list of items in the menu
+     * @param gameWorld the current world of the game.
+     * @return the list of items in the menu
+     */
     public String menuList(Simulation gameWorld){
 
         String outputString = "";
@@ -393,6 +452,10 @@ public class Simulation2 {
         return outputString;
     }
 
+    /**
+     * A method that takes the user to the market, and allows us to access its functions
+     * @param gameWorld the current world of the game.
+     */
     public void market(Simulation gameWorld){
 
         boolean exitMarket = false;
@@ -429,6 +492,10 @@ public class Simulation2 {
         }
     }
 
+    /**
+     * A method that lists all the items in the method
+     * @param gameWorld the current world of the game.
+     */
     public void listMarket(Simulation gameWorld){
 
         ArrayList<Food> foodList = gameWorld.getMarket().getFood();
@@ -454,6 +521,11 @@ public class Simulation2 {
         }
     }
 
+    /**
+     * A method that allows you to buy items from the market
+     * @param gameWorld the current world of the game.
+     * @param inputItem the name of the item and the quantity to be purchased
+     */
     public void buyMarket(Simulation gameWorld, String inputItem){
 
         int tempIndex = inputItem.lastIndexOf(" ");
@@ -531,6 +603,11 @@ public class Simulation2 {
         }
     }
 
+    /**
+     * A method that allows you to sell an item in the market
+     * @param gameWorld the current world of the game.
+     * @param inputItem the item to be sold and the quantity to be sold.
+     */
     public void sellMarket(Simulation gameWorld, String inputItem){
 
         int tempIndex = inputItem.lastIndexOf(" ");
@@ -569,6 +646,10 @@ public class Simulation2 {
         }
     }
 
+    /**
+     * A method to calculate the popularity of the restaurant
+     * @param gameWorld the current world of the game.
+     */
     public void calcPopularity(Simulation gameWorld) {
         int countComplex = 0;
 
